@@ -18,7 +18,7 @@ export default function Login() {
   const onFinish = async (values) => {
     try {
       await dispatch(loginAction(values));
-      history.push(history.location?.state?.from || "/home");
+      history.replace(history.location?.state?.from || "/home");
       message.success("登录成功");
     } catch (err) {
       message.error(err.response?.data?.message || "登录失败");
