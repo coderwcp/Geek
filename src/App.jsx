@@ -1,17 +1,13 @@
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from "react-router-dom";
+import { Router, Route, Switch, Redirect } from "react-router-dom";
+import customHistory from "./utils/customHistory";
 import AuthRoute from "./components/AuthRoute";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
 
 export default function App() {
   return (
-    <Router>
+    <Router history={customHistory}>
       <Switch>
         <Route
           path="/"

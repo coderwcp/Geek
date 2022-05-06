@@ -1,10 +1,16 @@
-import { Layout, Menu, Popconfirm, Button } from "antd";
+import { Layout, Menu, Popconfirm, Button, message } from "antd";
 
 import styles from "./index.module.scss";
 import "./index.scss";
-// import { removeToken } from "@/utils/auth";
 
-import { Switch, Route, Link, Redirect, useLocation } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useLocation,
+  useHistory,
+} from "react-router-dom";
 import {
   PieChartOutlined,
   SolutionOutlined,
@@ -12,6 +18,10 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 
+import { updateUserInfoAction, logoutAction } from "@/store/actions/user";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import Dashboard from "../Dashboard";
 import Article from "../Article";
 import Publish from "../Publish";
@@ -21,7 +31,10 @@ const { Header, Sider, Content } = Layout;
 
 export default function GeekLayout() {
   // 使用路由对象，来实现编程式导航
-  // const history = useHistory();
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  const { name } = useSelector((state) => state.user.userInfo);
 
   const { pathname } = useLocation();
   // 根据当前地址来判断左侧菜单的选中状态，因为 publish 有可能会带参数，需要单独判断
@@ -29,11 +42,18 @@ export default function GeekLayout() {
     ? "/home/publish"
     : pathname;
 
-  // const logout = () => {
-  //   removeToken();
-  //   history.replace("/login");
-  //   console.log("退出登录");
-  // };
+  useEffect(() => {
+    // 获取用户信息
+    dispatch(updateUserInfoAction());
+  }, [dispatch]);
+  const onLogout = () => {
+    // 调用退出action 清除 token 和 用户信息
+    dispatch(logoutAction());
+    // 跳转到登陆页面
+    history.replace("/login");
+    // 提示退出成功
+    message.success("退出成功");
+  };
 
   const items = [
     {
@@ -68,12 +88,13 @@ export default function GeekLayout() {
         <Header>
           <span style={{ fontSize: 16 }}>极客园自媒体端</span>
           <div>
-            <span>{123}</span>
+            <span>{name}</span>
             <Popconfirm
               placement="bottomRight"
               title="您确认退出极客园自媒体端吗？"
               okText="确认"
               cancelText="取消"
+              onConfirm={onLogout}
             >
               <Button type="link" icon={<LogoutOutlined />}>
                 退出

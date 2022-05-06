@@ -4,7 +4,7 @@ import { Route, Redirect } from "react-router-dom";
 import { getToken } from "@/utils/auth";
 
 export default function AuthRoute({ component: Component, ...rest }) {
-  const { token } = getToken();
+  const token = getToken();
   return (
     <Route
       {...rest}
@@ -16,7 +16,7 @@ export default function AuthRoute({ component: Component, ...rest }) {
           <Redirect
             to={{
               pathname: "/login",
-              state: { form: prop.location.pathname },
+              state: { from: prop.location.pathname },
             }}
           ></Redirect>
         );
