@@ -1,0 +1,36 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+/01.脚手架默认文件
+/02_context通信
+/03_useState及useEffect
+/04_购物车案例
+/05_自定义hooks
+/06_useContext基本使用
+/07_redux基本使用
+/08_多个reducer的合并
+/09_todomvc
+/10_thunk&logger中间件
+/11_路由
+
