@@ -38,3 +38,14 @@ export const delArticle = (id) => {
     })
   }
 }
+
+// 添加文章
+export const addArticle = (data, draft = false) => {
+  return async dispatch => {
+    await request({
+      url: `/v1_0/mp/articles?draft=${draft}`,
+      method: 'post',
+      data
+    })
+  }
+}

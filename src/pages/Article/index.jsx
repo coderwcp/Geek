@@ -20,6 +20,7 @@ import { useChannels } from "@/utils/customHooks";
 import { useDispatch, useSelector } from "react-redux";
 import { getArticleAction, delArticle } from "@/store/actions/article";
 import { useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import defaultImg from "@/assets/error.png";
 const statusLabel = [
   { text: "草稿", color: "default" },
@@ -44,6 +45,8 @@ export default function Article() {
   const { results, page, per_page, total_count } = useSelector(
     (state) => state.article
   );
+
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(getArticleAction(paramsRef.current));
@@ -111,7 +114,11 @@ export default function Article() {
       key: "action",
       render: (_, row) => (
         <Space size="middle">
-          <Button type="link" icon={<EditOutlined />} />
+          <Button
+            onClick={() => history.replace("/home/publish/" + row.id)}
+            type="link"
+            icon={<EditOutlined />}
+          />
           <Button
             onClick={() => {
               Modal.confirm({
