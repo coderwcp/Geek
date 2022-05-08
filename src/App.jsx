@@ -9,13 +9,9 @@ export default function App() {
   return (
     <Router history={customHistory}>
       <Switch>
-        <Route
-          path="/"
-          exact
-          render={() => <Redirect to="/home"></Redirect>}
-        ></Route>
         <Route path="/login" component={Login}></Route>
         <AuthRoute path="/home" component={Layout}></AuthRoute>
+        <Redirect exact path="/" to="/home"></Redirect>
       </Switch>
     </Router>
   );

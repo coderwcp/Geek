@@ -11,30 +11,42 @@ import {
   Space,
   Tag,
   Image,
+  Modal,
+  message,
 } from "antd";
 import { Link } from "react-router-dom";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useChannels } from "@/utils/customHooks";
 import { useDispatch, useSelector } from "react-redux";
-import { getArticleAction } from "@/store/actions/article";
-import { useEffect } from "react";
+import { getArticleAction, delArticle } from "@/store/actions/article";
+import { useEffect, useRef } from "react";
 import defaultImg from "@/assets/error.png";
+const statusLabel = [
+  { text: "草稿", color: "default" },
+  { text: "待审核", color: "blue" },
+  { text: "审核通过", color: "green" },
+  { text: "审核拒绝", color: "red" },
+];
 
 export default function Article() {
   const dispatch = useDispatch();
   const { channels } = useChannels();
-  const statusLabel = [
-    { text: "草稿", color: "default" },
-    { text: "待审核", color: "blue" },
-    { text: "审核通过", color: "green" },
-    { text: "审核拒绝", color: "red" },
-  ];
+  // 使用 ref 来保存筛选条件和分页切换的数据，不能使用setState来设置，因为会导致页面重新渲染数据刷新
+  const paramsRef = useRef({
+    page: 1,
+    per_page: 10,
+    begin_pubdate: undefined,
+    end_pubdate: undefined,
+    status: undefined,
+    channel_id: undefined,
+  });
 
   const { results, page, per_page, total_count } = useSelector(
     (state) => state.article
   );
+
   useEffect(() => {
-    dispatch(getArticleAction());
+    dispatch(getArticleAction(paramsRef.current));
   }, [dispatch]);
 
   const columns = [
@@ -97,35 +109,55 @@ export default function Article() {
     {
       title: "操作",
       key: "action",
-      render: () => (
+      render: (_, row) => (
         <Space size="middle">
           <Button type="link" icon={<EditOutlined />} />
-          <Button type="link" icon={<DeleteOutlined />} />
+          <Button
+            onClick={() => {
+              Modal.confirm({
+                title: "您是否删除该文章？",
+                cancelText: "取消",
+                okText: "确认",
+                onOk: async () => {
+                  console.log(row.id);
+                  await dispatch(delArticle(row.id));
+                  message.success("删除成功");
+                  dispatch(getArticleAction(paramsRef.current));
+                },
+              });
+            }}
+            danger
+            type="link"
+            icon={<DeleteOutlined />}
+          />
         </Space>
       ),
     },
   ];
+
   const onFinish = (values) => {
-    const params = {};
-    params.status = values.status;
-    params.channel_id = values.channel_id;
+    paramsRef.current.status = values.status;
+    paramsRef.current.channel_id = values.channel_id;
     if (values.dateArr) {
-      params.begin_pubdate = values.dateArr[0].format("YYYY-MM-DD HH:mm:ss");
-      params.end_pubdate = values.dateArr[1].format("YYYY-MM-DD HH:mm:ss");
+      paramsRef.current.begin_pubdate = values.dateArr[0].format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      paramsRef.current.end_pubdate = values.dateArr[1].format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
     } else {
-      params.begin_pubdate = undefined;
-      params.end_pubdate = undefined;
+      paramsRef.current.begin_pubdate = undefined;
+      paramsRef.current.end_pubdate = undefined;
     }
-    console.log(params); // 根据当前条件筛选数据
-    dispatch(getArticleAction(params));
+    paramsRef.current.page = 1; // 筛选的时候需要重置页码为1
+    console.log(paramsRef.current); // 根据当前条件筛选数据
+    dispatch(getArticleAction(paramsRef.current));
   };
 
   const onPageChange = (page, pageSize) => {
-    console.log(page, pageSize);
-    const params = {};
-    params.page = page;
-    params.per_page = pageSize;
-    dispatch(getArticleAction(params));
+    paramsRef.current.page = page;
+    paramsRef.current.per_page = pageSize;
+    dispatch(getArticleAction(paramsRef.current));
   };
 
   return (

@@ -28,3 +28,13 @@ export const getArticleAction = (params) => {
     dispatch(setArticle(data))
   }
 }
+
+// 根据 id 删除文章
+export const delArticle = (id) => {
+  return async dispatch => {
+    await request({
+      url: `/v1_0/mp/articles/${id}`,
+      method: 'delete'
+    })
+  }
+}
