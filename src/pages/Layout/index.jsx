@@ -1,8 +1,9 @@
+// 导入 UI 组件
 import { Layout, Menu, Popconfirm, Button, message } from "antd";
-
+// 导入当前组件 模块化样式
 import styles from "./index.module.scss";
 import "./index.scss";
-
+// 导入路由组件
 import {
   Switch,
   Route,
@@ -11,21 +12,28 @@ import {
   useLocation,
   useHistory,
 } from "react-router-dom";
+// 导入 UI 图标
 import {
   PieChartOutlined,
   SolutionOutlined,
   FileWordOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-
+// 导入更新设置用户信息action 和 退出功能的action
 import { updateUserInfoAction, logoutAction } from "@/store/actions/user";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import Dashboard from "../Dashboard";
-import Article from "../Article";
-import Publish from "../Publish";
-import NotFound from "../NotFound";
+import { useEffect, lazy, Suspense } from "react";
+// import Dashboard from "../Dashboard";
+// import Article from "../Article";
+// import Publish from "../Publish";
+// import NotFound from "../NotFound";
+
+// 组件懒加载
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Article = lazy(() => import("@/pages/Article"));
+const Publish = lazy(() => import("@/pages/Publish"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const { Header, Sider, Content } = Layout;
 
@@ -103,17 +111,19 @@ export default function GeekLayout() {
           </div>
         </Header>
         <Content>
-          <Switch>
-            <Route
-              path="/home"
-              exact
-              render={() => <Redirect to="/home/dashboard"></Redirect>}
-            ></Route>
-            <Route path="/home/dashboard" component={Dashboard}></Route>
-            <Route path="/home/article" component={Article}></Route>
-            <Route path="/home/publish/:id?" component={Publish}></Route>
-            <Route component={NotFound}></Route>
-          </Switch>
+          <Suspense>
+            <Switch>
+              <Route
+                path="/home"
+                exact
+                render={() => <Redirect to="/home/dashboard"></Redirect>}
+              ></Route>
+              <Route path="/home/dashboard" component={Dashboard}></Route>
+              <Route path="/home/article" component={Article}></Route>
+              <Route path="/home/publish/:id?" component={Publish}></Route>
+              <Route component={NotFound}></Route>
+            </Switch>
+          </Suspense>
         </Content>
       </Layout>
     </Layout>

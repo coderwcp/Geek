@@ -1,4 +1,5 @@
 // 自定义hook
+// 导入需要使用到的 hook
 import { useSelector, useDispatch } from "react-redux"
 import { useEffect } from "react"
 import { getChannelsAction } from "@/store/actions/article"
@@ -12,8 +13,10 @@ const useChannels = () => {
   const dispatch = useDispatch()
   // 页面第一次渲染 和 dispatch 发生变化更新页面
   useEffect(() => {
+    // 获取频道分类数据
     dispatch(getChannelsAction())
   }, [dispatch])
+  // 返回获取到的频道分来数据
   return channels
 }
 
