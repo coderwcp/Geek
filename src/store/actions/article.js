@@ -49,3 +49,18 @@ export const addArticle = (data, draft = false) => {
     })
   }
 }
+
+// 修改文章
+export const editArticle = (data, draft = false) => {
+  return async dispatch => {
+    await request.put(`/v1_0/mp/articles/${data.id}?draft=${draft}`, data)
+  }
+}
+
+// 获取文章详情
+export const getArticle = id => {
+  return async dispatch => {
+    const data = await request.get('/v1_0/mp/articles/' + id)
+    return data
+  }
+}

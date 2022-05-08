@@ -33,7 +33,7 @@ request.interceptors.response.use(
     return response ? response.data : response
   },
   err => {
-    if (err.response.status === 401) {
+    if (err.response?.status === 401) {
       // token 过期，调用退出的action清除token 和用户信息
       store.dispatch(logoutAction())
       // 跳转到登录页，这里不能用useHistory，hook只能再函数式组件和自定义hook中使用，需要自己封装一个customHistory
